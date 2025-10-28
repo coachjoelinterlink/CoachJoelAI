@@ -12,7 +12,10 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 @app.route('/')
 def home():
-    return "Flask Sign-In App is Running!"
+    return '''
+        <h2>Flask Sign-In App is Running!</h2>
+        <p><a href="/signin">Go to Sign-In Page</a></p>
+    '''
 
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
@@ -35,3 +38,4 @@ if __name__ == '__main__':
     # 🚀 Railway needs to run on port 8080 and host 0.0.0.0
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
