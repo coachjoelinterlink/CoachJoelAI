@@ -18,63 +18,96 @@ SYSTEM_PROMPT = """You are Coach Joel AI who helps the InterLink Community and G
 Be professional, concise, and supportive in your tone. End responses positively.
 """
 
-# Sign-in page
+# --- Sign-in page ---
 signin_html = '''
 <!DOCTYPE html>
 <html>
 <head>
 <title>Sign In - Coach Joel AI</title>
 <style>
-body { font-family: Arial; text-align:center; background: #f2f2f2; }
-.container { margin-top: 100px; background: white; padding: 40px; border-radius: 10px; display:inline-block; }
-input, button { margin: 10px; padding: 10px; width: 80%; }
-button { background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
+body { font-family: "Segoe UI", sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; background:#111; color:#fff; }
+.container { background:#1e1e1e; padding:40px; border-radius:12px; box-shadow:0 0 15px rgba(0,0,0,0.5); width:350px; text-align:center; }
+input, button { width:90%; padding:10px; margin:10px 0; border-radius:6px; border:none; font-size:15px; }
+input { background:#2c2c2c; color:#fff; }
+button { background:#0078ff; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
+button:hover { background:#005ccc; }
+p { color:red; }
 </style>
 </head>
 <body>
 <div class="container">
-<h2>Sign In to Coach Joel AI</h2>
-<form method="POST">
+  <h2>🔒 Sign In</h2>
+  <form method="POST">
     <input type="email" name="email" placeholder="Email" required><br>
     <input type="password" name="password" placeholder="Password" required><br>
     <button type="submit">Sign In</button>
-</form>
-<p style="color:red;">{{ message or "" }}</p>
+  </form>
+  <p>{{ message or "" }}</p>
 </div>
 </body>
 </html>
 '''
 
-# Chat page
+# --- Chat UI ---
 chat_html = '''
 <!DOCTYPE html>
 <html>
 <head>
 <title>Coach Joel AI</title>
 <style>
-body { font-family: Arial; background: #eaeaea; display:flex; justify-content:center; padding-top:50px; }
-.chat-box { width: 90%; max-width: 600px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-textarea { width: 100%; height: 100px; margin-top: 10px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
-button { background: #007BFF; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
-.response { background: #f5f5f5; padding: 15px; border-radius: 8px; margin-top: 20px; }
-input[type=file] { margin-top: 10px; }
+body { 
+  margin:0; padding:0; font-family:"Segoe UI",sans-serif; background:#121212; color:white; 
+  display:flex; flex-direction:column; height:100vh;
+}
+header {
+  background:#1e1e1e; padding:15px; text-align:center; font-size:20px; font-weight:bold;
+  border-bottom:1px solid #333;
+}
+.chat-container {
+  flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column;
+}
+.message {
+  max-width:75%; margin:8px 0; padding:12px 16px; border-radius:12px; line-height:1.5;
+}
+.user { 
+  align-self:flex-end; background:#0078ff; border-bottom-right-radius:2px;
+}
+.bot { 
+  align-self:flex-start; background:#2c2c2c; border-bottom-left-radius:2px;
+}
+form {
+  display:flex; gap:10px; padding:15px; background:#1e1e1e; border-top:1px solid #333;
+}
+textarea {
+  flex:1; resize:none; background:#2c2c2c; color:white; border:none; padding:10px; border-radius:8px; height:60px;
+}
+button {
+  background:#0078ff; border:none; color:white; padding:0 20px; border-radius:8px; cursor:pointer; font-weight:bold;
+}
+button:hover { background:#005ccc; }
+a.logout { color:#bbb; text-decoration:none; position:absolute; right:15px; top:18px; font-size:14px; }
+a.logout:hover { color:white; }
 </style>
 </head>
 <body>
-<div class="chat-box">
-    <h2>Coach Joel AI 🤖</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <textarea name="message" placeholder="Type your question here..." required></textarea><br>
-        <input type="file" name="image"><br>
-        <button type="submit">Send</button>
-    </form>
-    {% if response %}
-        <div class="response">
-            <strong>Response:</strong><br>{{ response }}
-        </div>
-    {% endif %}
-    <p><a href="/logout">Logout</a></p>
+<header>
+  Coach Joel AI 🤖
+  <a href="/logout" class="logout">Logout</a>
+</header>
+<div class="chat-container" id="chat">
+  {% for role, text in chat_history %}
+    <div class="message {{ 'user' if role=='user' else 'bot' }}">{{ text }}</div>
+  {% endfor %}
 </div>
+<form method="POST" enctype="multipart/form-data">
+  <textarea name="message" placeholder="Type your message..." required></textarea>
+  <input type="file" name="image" accept="image/*">
+  <button type="submit">Send</button>
+</form>
+<script>
+  const chatDiv = document.getElementById('chat');
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+</script>
 </body>
 </html>
 '''
@@ -90,6 +123,7 @@ def signin():
         password = request.form['password']
         if email == ADMIN_EMAIL and password == ADMIN_PASSWORD:
             session['logged_in'] = True
+            session['chat_history'] = []
             return redirect(url_for('chat'))
         else:
             return render_template_string(signin_html, message="❌ Invalid credentials.")
@@ -100,9 +134,13 @@ def chat():
     if not session.get('logged_in'):
         return redirect(url_for('signin'))
 
-    response_text = None
+    if 'chat_history' not in session:
+        session['chat_history'] = []
+
     if request.method == 'POST':
         user_input = request.form['message']
+        session['chat_history'].append(('user', user_input))
+
         image = request.files.get('image')
 
         data = {
@@ -128,7 +166,9 @@ def chat():
         except Exception as e:
             response_text = f"⚠️ Error: {e}"
 
-    return render_template_string(chat_html, response=response_text)
+        session['chat_history'].append(('bot', response_text))
+
+    return render_template_string(chat_html, chat_history=session['chat_history'])
 
 @app.route('/logout')
 def logout():
