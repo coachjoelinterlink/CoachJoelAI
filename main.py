@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, render_template, request
 from dotenv import load_dotenv
 import os
 
@@ -6,7 +6,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Load admin credentials from Railway environment variables
+# Load admin credentials
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
@@ -23,19 +23,11 @@ def signin():
         email = request.form['email']
         password = request.form['password']
         if email == ADMIN_EMAIL and password == ADMIN_PASSWORD:
-            return "✅ Login successful!"
+            return render_template('signin.html', message="✅ Login successful!")
         else:
-            return "❌ Invalid credentials."
-    return '''
-        <form method="POST">
-            <input type="email" name="email" placeholder="Email" required><br>
-            <input type="password" name="password" placeholder="Password" required><br>
-            <button type="submit">Sign In</button>
-        </form>
-    '''
+            return render_template('signin.html', message="❌ Invalid credentials.")
+    return render_template('signin.html', message=None)
 
 if __name__ == '__main__':
-    # 🚀 Railway needs to run on port 8080 and host 0.0.0.0
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-
