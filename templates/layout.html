@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+  <title>Coach Joel AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Coach Joel AI</h1>
+    {% if session.get('logged_in') %}
+      <a href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
