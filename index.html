@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Coach Joel AI — Professional Mentor</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo">CJ</div>
+      <h1 style="font-size:13px;color:#bfefff">Welcome to Coach Joel AI</h1>
+    </div>
+    <div style="font-size:13px;color:#bfefff"></div>
+  </header>
+
+  <div class="app">
+    <div class="panels">
+      <aside class="left">
+        <h3>Sign in</h3>
+        <div class="label">Telegram username or InterLink ID</div>
+        <input id="identity" placeholder="@CoachJoel or 950150519" />
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="signin" class="btn">Sign in</button>
+          <button id="clear" class="btn ghost">Clear</button>
+        </div>
+
+        <div style="margin-top:12px" class="small">
+          Coach Joel AI is your personal mentor to guide your journey in InterLink — from Ordinary Linker to Ambassador.  
+          Simply sign in with your name or InterLink ID to start.
+        </div>
+
+        <div style="margin-top:8px; font-size:12px; color:#bfefff;" class="small">
+          📌 Onboarding Group:  
+          <a href="https://t.me/Interlink_Coach_House_Onboarding" target="_blank" style="color:#bfefff; text-decoration:underline;">
+            https://t.me/Interlink_Coach_House_Onboarding
+          </a><br>
+          📌 Official Ambassador Group:  
+          <a href="https://t.me/+ZCennyO_1c5jNjI1" target="_blank" style="color:#bfefff; text-decoration:underline;">
+            https://t.me/+ZCennyO_1c5jNjI1
+          </a>
+        </div>
+		<div class="video-container">
+  <iframe src="https://www.youtube-nocookie.com/embed/1Zah5S6QBMs?rel=0" title="YouTube video player" allowfullscreen></iframe>
+</div>
+
+
+        <div id="amb-list" style="margin-top:8px" class="small"></div>
+        <hr style="border-color:rgba(255,255,255,0.02);margin:12px 0">
+      </aside>
+
+      <section class="right">
+        <div class="chat-header">
+          <div>
+            <div id="greeting" style="font-weight:700">Sign in to begin</div>
+            <div id="status" class="small" style="color:#bfefff">Status: idle</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="tts-toggle" class="btn ghost">🔊 TTS: On</button>
+            <button id="mic-toggle" class="btn ghost">🎙️</button>
+            <button id="logout" class="btn ghost">🚪 Logout</button>
+          </div>
+        </div>
+
+        <div id="chat-area" class="chat-body"></div>
+
+        <div class="composer">
+          <textarea id="composer" placeholder="Ask Coach Joel AI..."></textarea>
+          <button id="voiceBtn" class="btn circle" title="Voice to text">🎤</button>
+          <button id="send" class="btn">Send</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer style="text-align:center; padding:12px; font-size:12px; color:#bfefff; background:rgba(0,0,0,0.5); border-top:1px solid rgba(29,233,255,0.6);">
+    © 2025 Coach Joel AI • Powered by InterLink Labs • All Rights Reserved<br>
+    <a href="https://interlinklabs.ai" target="_blank" style="color:#bfefff; text-decoration:underline;">interlinklabs.ai</a> |  
+    <a href="https://github.com/" target="_blank" style="color:#bfefff; text-decoration:underline;">GitHub Repository</a>
+  </footer>
+
+<script src="app.js"></script>
+</body>
+</html>
