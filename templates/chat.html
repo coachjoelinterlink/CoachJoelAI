@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Joel AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        form {
+            display: flex;
+            margin: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: white;
+            margin: 10px;
+            border-radius: 10px;
+        }
+        .response {
+            background: #e9f3ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .logout {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        👋 Welcome to Coach Joel AI
+        <a href="/logout" class="logout" style="color:white; text-decoration:none;">Logout</a>
+    </header>
+    <div class="chat-box">
+        {% if response %}
+            <div class="response"><strong>Coach Joel AI:</strong> {{ response }}</div>
+        {% endif %}
+    </div>
+    <form method="POST">
+        <input type="text" name="message" placeholder="Type your question..." required>
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
