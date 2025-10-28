@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, request
 from dotenv import load_dotenv
 import os
 
@@ -6,6 +6,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
+# Load admin credentials from Railway environment variables
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
@@ -31,4 +32,6 @@ def signin():
     '''
 
 if __name__ == '__main__':
-    app.run()
+    # 🚀 Railway needs to run on port 8080 and host 0.0.0.0
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
