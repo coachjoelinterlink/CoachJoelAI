@@ -13,7 +13,7 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 @app.route('/')
 def home():
     return '''
-        <h2>Flask Sign-In App is Running!</h2>
+        <h2>Coach Joel AI Your Personal AI InterLink Assistant</h2>
         <p><a href="/signin">Go to Sign-In Page</a></p>
     '''
 
@@ -31,3 +31,4 @@ def signin():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
