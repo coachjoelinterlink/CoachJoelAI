@@ -13,7 +13,7 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 # Gemini setup
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-API_KEY = os.getenv("OPENAI_API_KEY")
+API_KEY = os.getenv("OPENAI_API_KEY")  # still using this name from your Railway vars
 SYSTEM_PROMPT = """You are Coach Joel AI who helps the InterLink Community and Global Ambassadors. 
 Be professional, concise, and supportive in your tone. End responses positively.
 """
@@ -25,7 +25,7 @@ signin_html = '''
 <head>
 <title>Sign In - Coach Joel AI</title>
 <style>
-body { font-family: "Segoe UI", sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; background:#111; color:#fff; }
+body { font-family:"Segoe UI",sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; background:#111; color:#fff; }
 .container { background:#1e1e1e; padding:40px; border-radius:12px; box-shadow:0 0 15px rgba(0,0,0,0.5); width:350px; text-align:center; }
 input, button { width:90%; padding:10px; margin:10px 0; border-radius:6px; border:none; font-size:15px; }
 input { background:#2c2c2c; color:#fff; }
@@ -48,45 +48,27 @@ p { color:red; }
 </html>
 '''
 
-# --- Chat UI ---
+# --- Chat UI with image preview ---
 chat_html = '''
 <!DOCTYPE html>
 <html>
 <head>
 <title>Coach Joel AI</title>
 <style>
-body { 
-  margin:0; padding:0; font-family:"Segoe UI",sans-serif; background:#121212; color:white; 
-  display:flex; flex-direction:column; height:100vh;
-}
-header {
-  background:#1e1e1e; padding:15px; text-align:center; font-size:20px; font-weight:bold;
-  border-bottom:1px solid #333;
-}
-.chat-container {
-  flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column;
-}
-.message {
-  max-width:75%; margin:8px 0; padding:12px 16px; border-radius:12px; line-height:1.5;
-}
-.user { 
-  align-self:flex-end; background:#0078ff; border-bottom-right-radius:2px;
-}
-.bot { 
-  align-self:flex-start; background:#2c2c2c; border-bottom-left-radius:2px;
-}
-form {
-  display:flex; gap:10px; padding:15px; background:#1e1e1e; border-top:1px solid #333;
-}
-textarea {
-  flex:1; resize:none; background:#2c2c2c; color:white; border:none; padding:10px; border-radius:8px; height:60px;
-}
-button {
-  background:#0078ff; border:none; color:white; padding:0 20px; border-radius:8px; cursor:pointer; font-weight:bold;
-}
-button:hover { background:#005ccc; }
+body { margin:0; padding:0; font-family:"Segoe UI",sans-serif; background:#121212; color:white; display:flex; flex-direction:column; height:100vh; }
+header { background:#1e1e1e; padding:15px; text-align:center; font-size:20px; font-weight:bold; border-bottom:1px solid #333; position:relative; }
 a.logout { color:#bbb; text-decoration:none; position:absolute; right:15px; top:18px; font-size:14px; }
 a.logout:hover { color:white; }
+.chat-container { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; }
+.message { max-width:75%; margin:8px 0; padding:12px 16px; border-radius:12px; line-height:1.5; }
+.user { align-self:flex-end; background:#0078ff; border-bottom-right-radius:2px; }
+.bot { align-self:flex-start; background:#2c2c2c; border-bottom-left-radius:2px; }
+form { display:flex; gap:10px; padding:15px; background:#1e1e1e; border-top:1px solid #333; align-items:center; }
+textarea { flex:1; resize:none; background:#2c2c2c; color:white; border:none; padding:10px; border-radius:8px; height:60px; }
+button { background:#0078ff; border:none; color:white; padding:0 20px; border-radius:8px; cursor:pointer; font-weight:bold; }
+button:hover { background:#005ccc; }
+.preview-container { display:none; margin-top:8px; text-align:center; }
+.preview-container img { max-width:150px; border-radius:8px; margin-top:5px; }
 </style>
 </head>
 <body>
@@ -94,19 +76,46 @@ a.logout:hover { color:white; }
   Coach Joel AI 🤖
   <a href="/logout" class="logout">Logout</a>
 </header>
+
 <div class="chat-container" id="chat">
   {% for role, text in chat_history %}
     <div class="message {{ 'user' if role=='user' else 'bot' }}">{{ text }}</div>
   {% endfor %}
 </div>
+
 <form method="POST" enctype="multipart/form-data">
   <textarea name="message" placeholder="Type your message..." required></textarea>
-  <input type="file" name="image" accept="image/*">
+  <input type="file" name="image" accept="image/*" id="image-input" style="display:none;">
+  <label for="image-input" style="cursor:pointer; font-size:24px;">📷</label>
   <button type="submit">Send</button>
 </form>
+
+<div class="preview-container" id="preview-container">
+  <p>🖼️ Image ready to send:</p>
+  <img id="preview" src="#" alt="preview">
+</div>
+
 <script>
-  const chatDiv = document.getElementById('chat');
-  chatDiv.scrollTop = chatDiv.scrollHeight;
+const chatDiv = document.getElementById('chat');
+chatDiv.scrollTop = chatDiv.scrollHeight;
+
+const imageInput = document.getElementById('image-input');
+const previewContainer = document.getElementById('preview-container');
+const previewImg = document.getElementById('preview');
+
+imageInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      previewImg.src = evt.target.result;
+      previewContainer.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  } else {
+    previewContainer.style.display = 'none';
+  }
+});
 </script>
 </body>
 </html>
@@ -145,7 +154,9 @@ def chat():
 
         data = {
             "contents": [{
-                "parts": [{"text": SYSTEM_PROMPT + "\nUser: " + user_input}]
+                "parts": [
+                    {"text": SYSTEM_PROMPT + "\nUser: " + user_input}
+                ]
             }]
         }
 
@@ -160,7 +171,11 @@ def chat():
             })
 
         try:
-            res = requests.post(f"{GEMINI_ENDPOINT}?key={API_KEY}", json=data)
+            res = requests.post(
+                f"{GEMINI_ENDPOINT}?key={API_KEY}",
+                headers={"Content-Type": "application/json"},
+                json=data
+            )
             res.raise_for_status()
             response_text = res.json()['candidates'][0]['content']['parts'][0]['text']
         except Exception as e:
@@ -178,4 +193,3 @@ def logout():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-
