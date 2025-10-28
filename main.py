@@ -1,7 +1,6 @@
-# make sure this is correct — no openai import here!
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from dotenv import load_dotenv
-import os, requests, base64
+import os, requests, base64  
 
 load_dotenv()
 
@@ -11,9 +10,6 @@ app.secret_key = os.getenv("SECRET_KEY", "your-secret-key")  # Needed for sessio
 # Load admin credentials
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-
-# Set up your API key (replace with your AI provider)
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route('/')
 def home():
@@ -65,4 +61,5 @@ def logout():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
