@@ -1,14 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Ask Coach Joel AI</h2>
-<form method="POST" enctype="multipart/form-data">
-  <textarea name="message" placeholder="Type your question..." rows="4" cols="50" required></textarea><br>
-  <input type="file" name="image" accept="image/*"><br><br>
-  <button type="submit">Send</button>
-</form>
+<div class="chat-container">
+  <div class="chat-box" id="chat-box">
+    {% if reply %}
+      <div class="message bot">
+        <div class="bubble">
+          {{ reply|safe }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
 
-{% if reply %}
-  <h3>Response:</h3>
-  <div class="reply">{{ reply|safe }}</div>
-{% endif %}
+  <form method="POST" enctype="multipart/form-data" class="input-area">
+    <textarea name="message" placeholder="Ask Coach Joel AI..." required></textarea>
+    <div class="actions">
+      <input type="file" name="image" accept="image/*" id="image-upload">
+      <label for="image-upload" class="upload-label">📷</label>
+      <button type="submit">Send</button>
+    </div>
+  </form>
+</div>
 {% endblock %}
