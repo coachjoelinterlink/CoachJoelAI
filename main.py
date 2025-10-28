@@ -13,7 +13,7 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 # Gemini setup
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-API_KEY = os.getenv("GEMINI_API_KEY")
+API_KEY = os.getenv("OPENAI_API_KEY")
 SYSTEM_PROMPT = """You are Coach Joel AI who helps the InterLink Community and Global Ambassadors. 
 Be professional, concise, and supportive in your tone. End responses positively.
 """
@@ -178,3 +178,4 @@ def logout():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
